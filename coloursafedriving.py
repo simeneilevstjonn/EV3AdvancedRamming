@@ -53,6 +53,10 @@ class ColourDriver:
         # When loop has broken, either the colour has been detected or the distance limit has been exceeded. 
         # Check if distance is exceeded
         if self.driveBase.distance() >= distance_limit:
+            # Break robot. Hopefully reversing will quicken the decerelation as opposed to stop(). If not, another method incorporating straight() must be made.
+            self.driveBase.straight(-reverse_distance/10)
+            self.driveBase.robot.stop()
+
             # Break function
             return
 
