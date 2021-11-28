@@ -9,7 +9,7 @@ from pybricks.robotics import DriveBase
 from pybricks.media.ev3dev import SoundFile, ImageFile
 from math import cos, sin, degrees, radians, sqrt, acos
 from time import time_ns
-from coloursafedriving.py import ColourDriver
+from coloursafedriving import ColourDriver
 from random import randint
 
 # RamCalculator class

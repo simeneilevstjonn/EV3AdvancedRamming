@@ -7,8 +7,8 @@ from pybricks.parameters import Port, Stop, Direction, Button, Color
 from pybricks.tools import wait, StopWatch, DataLog
 from pybricks.robotics import DriveBase
 from pybricks.media.ev3dev import SoundFile, ImageFile
-from ramcalculate.py import RamCalculator
-from coloursafedriving.py import ColourDriver
+from ramcalculate import RamCalculator
+from coloursafedriving import ColourDriver
 from random import randint
 
 """
