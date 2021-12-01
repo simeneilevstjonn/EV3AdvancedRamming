@@ -8,7 +8,6 @@ from pybricks.tools import wait, StopWatch, DataLog
 from pybricks.robotics import DriveBase
 from pybricks.media.ev3dev import SoundFile, ImageFile
 from math import cos, sin, degrees, radians, sqrt, acos
-from time import time_ns
 from coloursafedriving import ColourDriver
 from random import randint
 
@@ -34,12 +33,13 @@ class RamCalculator:
         self.gyroscope = gyroscope
         self.colourSensor = colour_sensor
         self.speed = speed
+        self.radius = radius
 
         # Create an instance of ColourDriver
         self._colourDriver = ColourDriver(drive_base, colour_sensor, Color.BLACK)
     
     # Rotate until an object is located in front within set distance
-    def getObjectDist(distance_threshold, rotation_threshold, rotate_step=10, step_delay=10) -> tuple:
+    def getObjectDist(self, distance_threshold, rotation_threshold, rotate_step=10, step_delay=1) -> tuple:
         """
         Rotates the robot, until an object is located in front within the distance_threshold. Returns None if it rotates more than rotation_threshold.
 
@@ -51,10 +51,10 @@ class RamCalculator:
         """
 
         # Reset the gyroscope
-        self.gyrocope.reset_angle(0)
+        self.gyroscope.reset_angle(0)
 
         # Loop while we have not turnt more than the threshold
-        while self.gyroscope.angle < rotation_threshold:
+        while self.gyroscope.angle() < rotation_threshold:
             # Measure distance
             distance = self.ultrasonicSensor.distance()
 
@@ -71,7 +71,7 @@ class RamCalculator:
         return (self.gyroscope.angle(), None)
 
     # Calulcate optimal attack angle change for ramming opponent
-    def getAttackAngle(a, b, angle, time) -> float:
+    def getAttackAngle(self, a, b, angle, time) -> float:
         """
         Gets the optimal angle change in order to ram the opponent using the set speed, given two measurements of distance with an exact angle as well as time between.
 
@@ -114,7 +114,7 @@ class RamCalculator:
         return angle_diff if (c[1] - a * cos(radians(angle)) >= 0) else -angle_diff
 
     # Excecute a ramming attack
-    def doAttack(distance_threshold) -> bool:
+    def doAttack(self, distance_threshold) -> bool:
         """
         Excecutes the ramming attack using the parameters supplied.
 
@@ -124,10 +124,11 @@ class RamCalculator:
         """
 
         # Do the first scan. Use maximum 360 degrees of rotation. The other parameters might need to be tweaked.
-        scan_a = getObjectDist(distance_threshold, 360)
+        scan_a = self.getObjectDist(distance_threshold, 360)
 
-        # Save the time when scan has completed. Specified in nanoseconds. Must divide by 10**6 to get milliseconds.
-        scan_a_time = time_ns()
+        # Save the time when scan has completed. Create stopwatch.
+        stopwatch = StopWatch()
+        
 
         # Return false if the scan did not find anything.
         if scan_a[1] is None:
@@ -137,10 +138,10 @@ class RamCalculator:
         wait(500)
 
         # Do the second scan. Use maximum 360 degrees of rotation. The other parameters might need to be tweaked.
-        scan_b = getObjectDist(distance_threshold, 360)
+        scan_b = self.getObjectDist(distance_threshold, 360)
 
-        # Save the time when scan has completed. Specified in nanoseconds. Must divide by 10**6 to get milliseconds.
-        scan_b_time = time_ns()
+        # Save the time when scan has completed. 
+        time_interval = stopwatch.time()
 
         # Return false if the scan did not find anything.
         if scan_b[1] is None:
@@ -150,7 +151,7 @@ class RamCalculator:
         angle = scan_b[0] if scan_b[0] < 180 else scan_b[0] - 360
 
         # Calculate the optimum angle change
-        change = getAttackAngle(scan_a[1], scan_b[1], angle, (scan_b_time - scan_a_time) / 10**6)
+        change = self.getAttackAngle(scan_a[1], scan_b[1], angle, time_interval)
 
         # Turn to the calculated angle
         self.driveBase.turn(-change) # Must be negative, since DriveBase uses clockwise as positive direction.

@@ -26,7 +26,7 @@ class ColourDriver:
         self.watchColour = watch_colour
 
     # Drive at a constant speed
-    def drive(speed, reverse_distance=300, turn_angle=180, distance_limit=float('inf')):
+    def drive(self, speed, reverse_distance=300, turn_angle=180, distance_limit=float('inf')):
         """
         Starts driving at a constant speed, until the colour sensor detects the watch colour.
 
@@ -37,7 +37,7 @@ class ColourDriver:
         """
 
         # Set speed settings for reversing. Hopefully this works without using the full settings(straight_speed, straight_acceleration, turn_rate, turn_acceleration) overload.
-        self.driveBase.settings(speed)
+        #self.driveBase.settings(speed)
 
         # Reset the accumulated driven length
         self.driveBase.reset()
@@ -46,7 +46,7 @@ class ColourDriver:
         self.driveBase.drive(speed, 0)
 
         # Constantly check wether the colour is not the watch colour
-        while (self.colourSensor.color() != self.watchColour) AND (self.driveBase.distance() < distance_limit):
+        while (self.colourSensor.color() != self.watchColour) & (self.driveBase.distance() < distance_limit):
             # Wait for some short period, and check again. It is important that there is no chance that a line 10mm wide will be missed due to the delay.
             wait(8)
         

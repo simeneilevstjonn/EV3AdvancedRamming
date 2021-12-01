@@ -22,7 +22,7 @@ All names in en_UK, even when library is in en_US.
 """
 
 # Arena radius. Must be measured. Using 600mm as a placeholder
-radius = 600
+radius = 350
 
 # Define robot objects
 # Brick
@@ -39,11 +39,11 @@ colourSensor = ColorSensor(Port.S3)
 
 # Drive base
 # Wheel diameter and axle track must be thoroughly measured and calibrated.
-driveBase = DriveBase(leftMotor, rightMotor, 58, 120)
+driveBase = DriveBase(leftMotor, rightMotor, 58, 123)
 
 # ColourDriver and RamCalculator
 colourDriver = ColourDriver(driveBase, colourSensor, Color.BLACK)
-ramCalculator = RamCalculator(driveBase, ultrasonicSensor, gyroscope, colourSensor, 600, radius)
+ramCalculator = RamCalculator(driveBase, ultrasonicSensor, gyroscope, colourSensor, 500, radius)
 # Speed has not been tested, must test to validate robot can achieve and rapidly break.
 
 
